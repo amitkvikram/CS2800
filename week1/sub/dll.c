@@ -129,6 +129,7 @@ DLL_NODE* dll_search(List **my_list, int data){	//Searching for data in double l
 		Temp=Temp->next;
 	}
 
+
 	return NULL;																	//If not found return NULL
 }
 
@@ -141,7 +142,7 @@ void dll_print(List **my_list){
 	printf("\n");
 }
 
-void free_memory(List **my_list){
+void dll_free_memory(List **my_list){
 	while(!dll_empty(my_list)){
 		dll_pop_front(my_list);
 	}
