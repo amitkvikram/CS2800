@@ -10,7 +10,7 @@ dll.o: dll.c
 	gcc -g -c dll.c
 
 run:edgeType
-	valgrind ./edgeType
+	./edgeType
 
 clean:
 	rm edgeType *.o
