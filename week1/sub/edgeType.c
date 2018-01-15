@@ -111,12 +111,12 @@ void print_edge_type(graph *G, int root){
     for(int j= 0; j<dll_size(&(G->vertex[i].adjList)); j++){
         int tmp = Temp->data;
 
-        if(G->vertex[i].previsit < G->vertex[tmp].previsit){
+        if(G->vertex[i].previsit < G->vertex[tmp].previsit && G->vertex[i].postvisit > G->vertex[tmp].postvisit){
           if(G->vertex[tmp].parent == i)  printf("%d-%d   : %s\n", i, tmp, "Tree Edge");
           else printf("%d-%d   : %s\n", i, tmp, "Forward Edge");
         }
         else {
-          if(G->vertex[tmp].previsit > G->vertex[i].postvisit) printf("%d-%d   : %s\n", i, tmp, "Cross Edge");
+          if(G->vertex[tmp].postvisit < G->vertex[i].previsit) printf("%d-%d   : %s\n", i, tmp, "Cross Edge");
           else printf("%d-%d   : %s\n", i, tmp, "Back Edge");
         }
         Temp = Temp->next;
