@@ -1,23 +1,3 @@
-<<<<<<< HEAD
-#include<stdio.h>
-#include<limits.h>
-#include<bool.h>
-
-void merge(FILE *fp, int l, int r, int mid){
-	
-
-int main(){
-	char filename[32];
-	printf("Enter FileName: ");
-	scanf("%s", FileName);
-	fp = fopen(FileName, 'r');
-	if(fp == NULL){
-		printf("Error in Opening File");
-		return 0;
-	}
-	
-	
-=======
 /*
 	Name: Amit Vikram Singh
 	Roll No: 111601001
@@ -143,4 +123,3 @@ int main(){
 	return 0;
 }
 //main ends here
->>>>>>> 24cd34130e2443b35a5f544401daaab3c7d8aa58
