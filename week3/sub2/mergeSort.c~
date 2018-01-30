@@ -13,23 +13,14 @@ int min(int a,int b){
 	else return a;
 }
 
+	char FileName[32];											//Name of input file
+
 //Merging two blocks
-<<<<<<< HEAD
-void merge(FILE *fp3, FILE *fp4, int l, int r, int end){
-	//printf("%d %d %d\n",l, r, end);
-||||||| merged common ancestors
 void merge(int l, int r, int end){
 	FILE *fp1 = fopen(FileName, "r+");				//Opening Input File.
 	FILE *fp2 = fopen(FileName, "r+");				//Opening Input File.
-	printf("%d %d %d\n",l, r, end);
-=======
-void merge(int l, int r, int end){
-	FILE *fp1 = fopen(FileName, "r+");				//Opening Input File.
-	FILE *fp2 = fopen(FileName, "r+");				//Opening Input File.
->>>>>>> 9fcaf1abc59fc8f9b9494d541d15488ffd50781d
 	FILE *f_temp = fopen("temp.bin","r+");			//Opening file for storing the merged elements
-	FILE *fp1 = fopen("input.bin","r+");
-	FILE *fp2 = fopen("input.bin","r+");
+
 	int i = l, j = r;
 	fseek(fp1, l*sizeof(long), SEEK_SET);
 	fseek(fp2, r*sizeof(long), SEEK_SET);
@@ -82,24 +73,18 @@ void merge(int l, int r, int end){
 }
 
 //Function takes file pointer and sorts the elements of file pointed by the file pointer
-void merge_sort(FILE *fp1, FILE *fp2, int sz){
+void merge_sort( int sz){
 	for(int blk_sz = 1; blk_sz< sz; blk_sz = 2*blk_sz){
 		for(int i =0; i< sz; i+=2*blk_sz){
-<<<<<<< HEAD
-			merge(fp1, fp2, i, min(i+blk_sz, sz), min(i+2*blk_sz, sz));	//calling function to merge
-||||||| merged common ancestors
-			merge( i, min(i+blk_sz, sz), min(i+2*blk_sz, sz));	//calling function to merge
-=======
 			printf("block size =  %d\n",blk_sz);
 			merge( i, min(i+blk_sz, sz), min(i+2*blk_sz, sz));	//calling function to merge
->>>>>>> 9fcaf1abc59fc8f9b9494d541d15488ffd50781d
 		}
 	}
 }
 
 //main begins here
 int main(){
-	char FileName[32];											//Name of input file
+
 	printf("Enter FileName: ");
 	scanf("%s", FileName);
 	FILE *fp1 = fopen(FileName, "r+");				//Opening Input File.
@@ -116,16 +101,16 @@ int main(){
 
 	long num;
 	fseek(fp1,0,SEEK_SET);								//fp now points to the beginning of file
-	merge_sort(fp1,fp2, sz);									//Calling merge_sort function which takes the fp and sz as input
+	merge_sort( sz);									//Calling merge_sort function which takes the fp and sz as input
 																			// and sorts the elemnts in the file pointed by fp
 
 	/*--------------------Printing elements of sorted file-----------------*/
 	FILE *fp3 = fopen("output_decimal.txt","w");
 
 	fseek(fp1,0,SEEK_SET);								//File now points to the beginning of file
-	FILE *fp4 = fopen(FileName, "r+");
+
 	printf("----------------Sorted-----------------\n");
-	while(fread(&num, sizeof(num),1, fp4)>0){
+	while(fread(&num, sizeof(num),1, fp1)>0){
 		fprintf(fp3, "%ld\n",num);		//saving decimal equivalent of binary number
 		// printf("%ld\n",num);
 	}
