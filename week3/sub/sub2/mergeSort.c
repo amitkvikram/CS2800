@@ -14,9 +14,11 @@ int min(int a,int b){
 }
 
 //Merging two blocks
-void merge(FILE *fp1, FILE *fp2, int l, int r, int end){
+void merge(FILE *fp3, FILE *fp4, int l, int r, int end){
 	//printf("%d %d %d\n",l, r, end);
 	FILE *f_temp = fopen("temp.bin","r+");			//Opening file for storing the merged elements
+	FILE *fp1 = fopen("input.bin","r+");			//Opening file for storing the merged elements
+	FILE *fp2 = fopen("input.bin","r+");			//Opening file for storing the merged elements
 
 	int i = l, j = r;
 	fseek(fp1, l*sizeof(long), SEEK_SET);
@@ -62,6 +64,8 @@ void merge(FILE *fp1, FILE *fp2, int l, int r, int end){
 		fwrite(&tmp1, sizeof(tmp1),1, fp1);
 	}
 	fclose(f_temp);	//closing file pointer
+	fclose(fp1);
+	fclose(fp2);
 }
 
 //Function takes file pointer and sorts the elements of file pointed by the file pointer
@@ -100,8 +104,9 @@ int main(){
 
 	fseek(fp1,0,SEEK_SET);								//File now points to the beginning of file
 
+	FILE *fp4 = fopen(FileName, "r+");
 	printf("----------------Sorted-----------------\n");
-	while(fread(&num, sizeof(num),1, fp1)>0){
+	while(fread(&num, sizeof(num),1, fp4)>0){
 		fprintf(fp3, "%ld\n",num);		//saving decimal equivalent of binary number
 		// printf("%ld\n",num);
 	}
