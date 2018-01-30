@@ -15,6 +15,7 @@ int min(int a,int b){
 
 //Merging two blocks
 void merge(FILE *fp1, FILE *fp2, int l, int r, int end){
+	//printf("%d %d %d\n",l, r, end);
 	FILE *f_temp = fopen("temp.bin","r+");			//Opening file for storing the merged elements
 
 	int i = l, j = r;
@@ -39,14 +40,14 @@ void merge(FILE *fp1, FILE *fp2, int l, int r, int end){
 	}
 
 	//Writing remaining elements in the file pointed by f_temp
-	// fseek(fp1, i*sizeof(long), SEEK_SET);
+	fseek(fp1, i*sizeof(long), SEEK_SET);
 	while(i<r){
 		fread(&tmp1, sizeof(tmp1),1, fp1);
 		fwrite(&tmp1, sizeof(tmp1), 1, f_temp);
 		i++;
 	}
 
-	// fseek(fp2, j*sizeof(long), SEEK_SET);;
+	fseek(fp2, j*sizeof(long), SEEK_SET);
 	while(j<end){
 		fread(&tmp1, sizeof(tmp1),1, fp2);
 		fwrite(&tmp1, sizeof(tmp1), 1, f_temp);
@@ -67,7 +68,6 @@ void merge(FILE *fp1, FILE *fp2, int l, int r, int end){
 void merge_sort(FILE *fp1, FILE *fp2, int sz){
 	for(int blk_sz = 1; blk_sz< sz; blk_sz = 2*blk_sz){
 		for(int i =0; i< sz; i+=2*blk_sz){
-			printf("%d %d\n",i,blk_sz);
 			merge(fp1, fp2, i, min(i+blk_sz, sz), min(i+2*blk_sz, sz));	//calling function to merge
 		}
 	}
@@ -103,7 +103,7 @@ int main(){
 	printf("----------------Sorted-----------------\n");
 	while(fread(&num, sizeof(num),1, fp1)>0){
 		fprintf(fp3, "%ld\n",num);		//saving decimal equivalent of binary number
-		printf("%ld\n",num);
+		// printf("%ld\n",num);
 	}
 
 	fclose(fp3);	//closing file pointer
