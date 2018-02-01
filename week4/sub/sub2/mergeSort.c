@@ -7,6 +7,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 
+char FileName[32];
 //Function to calculate minimum of two numbers a and b
 int min(int a,int b){
 	if(a>=b) return b;
@@ -14,12 +15,14 @@ int min(int a,int b){
 }
 
 //Merging two blocks
-void merge(FILE *fp3, FILE *fp4, int l, int r, int end){
-	//printf("%d %d %d\n",l, r, end);
+int merge(int l, int r, int end){
 	FILE *f_temp = fopen("temp.bin","r+");			//Opening file for storing the merged elements
-	FILE *fp1 = fopen("input.bin","r+");			//Opening file for storing the merged elements
-	FILE *fp2 = fopen("input.bin","r+");			//Opening file for storing the merged elements
-
+	FILE *fp1 = fopen(FileName,"r+");
+	FILE *fp2 = fopen(FileName,"r+");
+	if(fp1 == NULL || fp2 == NULL || f_temp == NULL){
+		printf("Error in Opening File(@merge function)\n");
+		return 0;
+	}
 	int i = l, j = r;
 	fseek(fp1, l*sizeof(long), SEEK_SET);
 	fseek(fp2, r*sizeof(long), SEEK_SET);
@@ -42,14 +45,12 @@ void merge(FILE *fp3, FILE *fp4, int l, int r, int end){
 	}
 
 	//Writing remaining elements in the file pointed by f_temp
-	fseek(fp1, i*sizeof(long), SEEK_SET);
 	while(i<r){
 		fread(&tmp1, sizeof(tmp1),1, fp1);
 		fwrite(&tmp1, sizeof(tmp1), 1, f_temp);
 		i++;
 	}
 
-	fseek(fp2, j*sizeof(long), SEEK_SET);
 	while(j<end){
 		fread(&tmp1, sizeof(tmp1),1, fp2);
 		fwrite(&tmp1, sizeof(tmp1), 1, f_temp);
@@ -66,25 +67,25 @@ void merge(FILE *fp3, FILE *fp4, int l, int r, int end){
 	fclose(f_temp);	//closing file pointer
 	fclose(fp1);
 	fclose(fp2);
+	return 1;
 }
 
 //Function takes file pointer and sorts the elements of file pointed by the file pointer
-void merge_sort(FILE *fp1, FILE *fp2, int sz){
+void merge_sort(int sz){
 	for(int blk_sz = 1; blk_sz< sz; blk_sz = 2*blk_sz){
 		for(int i =0; i< sz; i+=2*blk_sz){
-			merge(fp1, fp2, i, min(i+blk_sz, sz), min(i+2*blk_sz, sz));	//calling function to merge
+			int status = merge(i, min(i+blk_sz, sz), min(i+2*blk_sz, sz));	//calling function to merge
+			if(!status) return;
 		}
 	}
 }
 
 //main begins here
 int main(){
-	char FileName[32];											//Name of input file
-	printf("Enter FileName: ");
+	printf("Enter FileName: ");	//Name of input file
 	scanf("%s", FileName);
 	FILE *fp1 = fopen(FileName, "r+");				//Opening Input File.
-	FILE *fp2 = fopen(FileName, "r+");				//Opening Input File.
-	if(fp1 == NULL || fp2 == NULL){													//Checking if file is opened successfully
+	if(fp1 == NULL){													//Checking if file is opened successfully
 		printf("Error in Opening File");
 		return 0;
 	}
@@ -95,23 +96,23 @@ int main(){
 	printf("\nSize = %ld\n", sz);				//Printing total no of elements in the file
 
 	long num;
-	fseek(fp1,0,SEEK_SET);								//fp now points to the beginning of file
-	merge_sort(fp1,fp2, sz);									//Calling merge_sort function which takes the fp and sz as input
+	fclose(fp1);
+	merge_sort(sz);									//Calling merge_sort function which takes the fp and sz as input
 																			// and sorts the elemnts in the file pointed by fp
 
 	/*--------------------Printing elements of sorted file-----------------*/
-	FILE *fp3 = fopen("output_decimal.txt","w");
-
-	fseek(fp1,0,SEEK_SET);								//File now points to the beginning of file
-
-	FILE *fp4 = fopen(FileName, "r+");
-	printf("----------------Sorted-----------------\n");
-	while(fread(&num, sizeof(num),1, fp4)>0){
-		fprintf(fp3, "%ld\n",num);		//saving decimal equivalent of binary number
-		// printf("%ld\n",num);
+	FILE *fp2 = fopen("output_decimal.txt","w");		//Opening Output File
+	fp1 = fopen(FileName, "r+");
+	if(fp1 == NULL || fp2 == NULL){
+		printf("Error in Opening File\n");
+		return 0;
+	}
+	// printf("----------------Sorted-----------------\n");
+	while(fread(&num, sizeof(num),1, fp1)>0){
+		fprintf(fp2, "%ld\n",num);		//saving decimal equivalent of binary number
 	}
 
-	fclose(fp3);	//closing file pointer
+	// fclose(fp3);	//closing file pointer
 	fclose(fp1); //closing file pointer
 	fclose(fp2); //closing file pointer
 	return 0;
