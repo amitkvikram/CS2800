@@ -60,7 +60,7 @@ void dll<T>::push_back(T x){
 
 
 int main(){
-      char *a = "amit";
+      const char *a = "amit";
 
       dll<char*> my_list;
       my_list.push_back((char*)"amit");
