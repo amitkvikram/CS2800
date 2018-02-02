@@ -24,16 +24,17 @@ class dll{
             };
             node *Head = nullptr;
             node *Tail = nullptr;
-            void merge_sort(node *a, node *b);
-            void split(node *a, node *b, node **firstRef, node **secondRef);
-            void merge(node *a1, node *b1, node *a2, node *b2);
       public:
             class iterator{
                   private:
                         node *current;
                   public:
                         friend class dll<T>;
-            }
+            };
+      private:
+            void merge_sort(iterator *a, iterator *b);
+            void split(iterator *a, iterator *b, iterator **firstRef, iterator **secondRef);
+            void merge(iterator *a1, iterator *b1, iterator *a2, iterator *b2);
       public:
             void push_back(T x);
             void push_front(T x);
@@ -44,10 +45,10 @@ class dll{
             int size();
             bool is_empty();
             iterator begin(){
-                  return Head;
+                  return {Head};
             }
             iterator end(){
-                  return Tail;
+                  return {Tail};
             }
             void sort();
 };
@@ -111,8 +112,6 @@ const T & dll<T>::front() const{
       return Head->data;
 }
 
-int cnt = 0;
-
 template <class T>
 const T & dll<T>::back() const{
       if(Head == nullptr){
@@ -123,7 +122,7 @@ const T & dll<T>::back() const{
 }
 
 template <class T>
-void dll<T>::merge_sort(node *a, node *b){;
+void dll<T>::merge_sort(iterator *a, iterator *b){;
       if(a == nullptr || b == nullptr || a==b) return;
       // cout<<a->data<<' '<<b->data<<endl;
       node* end1  ;                 //end of first block
@@ -142,7 +141,7 @@ void dll<T>::sort(){
 
 //If number of nodes is odd extra node goes in second part
 template <class T>
-void dll<T>::split(node *a, node *b, node **firstRef, node **secondRef){
+void dll<T>::split(iterator *a, iterator *b, iterator **firstRef, iterator **secondRef){
       while(a!=b){
             a = a->next;
             if(a!=b) b = b->prev;
@@ -152,8 +151,8 @@ void dll<T>::split(node *a, node *b, node **firstRef, node **secondRef){
 }
 
 template <class T>
-void dll<T>::merge(node *a1, node *b1, node *a2, node *b2){
-      node *t1 = a1, *t2 = a2;
+void dll<T>::merge(iterator *a1, iterator *b1, iterator *a2, iterator *b2){
+      iterator *t1 = a1, *t2 = a2;
       dll<T> L;
       dll<T> R;
       if(a1 == nullptr || a2 == nullptr){
@@ -260,13 +259,13 @@ int main(){
                         cout<<my_list.front()<<' ';
                         cout<<my_list.back()<<endl;
                         break;
-                  case 10:
-                        dll<int>::node *temp = my_list.begin();
-                        while(temp!=nullptr){
-                              cout<<temp->data<<' ';
-                              temp = temp->next;
-                        }
-                        cout<<endl;
+                  // case 10:
+                        // dll<int>::node *temp = my_list.begin();
+                        // while(temp!=nullptr){
+                        //       cout<<temp->data<<' ';
+                        //       temp = temp->next;
+                        // }
+                        // cout<<endl;
             }
       }while(choice<11);
 
