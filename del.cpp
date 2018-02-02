@@ -27,25 +27,33 @@ using namespace std;
 //       t.y = t.y+m;
 //       cout<<t.x<<' '<<t.y<<endl;
 // }
-
-class c1{
-private:
-      int x = 0;
-public:
-      class c2{
-      private:
-            int y;
-      public:
-            friend class c1;
-      };
-      void init(){
-            c2 obj1;
-            obj1.y = 2;
-      }
-};
+//
+// class c1{
+// private:
+//       int x = 0;
+// public:
+//       class c2{
+//       private:
+//             int y;
+//       public:
+//             friend class c1;
+//       };
+//       void init(){
+//             c2 obj1;
+//             obj1.y = 2;
+//       }
+// };
 
 int main(int argc, char const *argv[]) {
-      c1 obj2;
-      obj2.init();
+      // c1 obj2;
+      // obj2.init();
+      std::list<int> v;
+      v.push_back(2);
+      v.push_back(3);
+      v.pop_back();
+      v.pop_back();
+      std::list<int>::iterator itr;
+      itr = v.begin();
+      cout<<*itr<<endl;
       return 0;
 }
