@@ -1,11 +1,39 @@
 #include<bits/stdc++.h>
 using namespace std;
 
+class c1{
+private:
+      class node{
+            public:
+                  // T data;
+                  // node *prev = nullptr;
+                  // node *next = nullptr;
+                  // node(T &x, node *p, node *q){
+                  // prev = p;
+                  // next = q;
+                  // data = x;
+                  // }
+                  int x = 10;
+      };
+      node Head;
+public:
+      class iterator{
+            private:
+                  int x;
+            public:
+                  friend class c1;
+                  iterator(){
+                        // current = p;
+                  }
+      };
+public:
+      iterator func1(){
+            return {};
+      }
+};
+
 int main(int argc, char const *argv[]) {
-      list<pair<char, int> > my_list;
-      my_list.push_back({'a',2});
-      // cout<<my_list.front()<s<endl;
-      my_list.pop_back();
-      cout<<my_list.front().first<<endl;
-      return 0;
+      c1 obj;
+      c1::iterator itr = obj.func1();
+
 }

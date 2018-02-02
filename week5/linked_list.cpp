@@ -32,9 +32,9 @@ class dll{
                         friend class dll<T>;
             };
       private:
-            void merge_sort(iterator *a, iterator *b);
-            void split(iterator *a, iterator *b, iterator **firstRef, iterator **secondRef);
-            void merge(iterator *a1, iterator *b1, iterator *a2, iterator *b2);
+            // void merge_sort(iterator *a, iterator *b);
+            // void split(iterator *a, iterator *b, iterator **firstRef, iterator **secondRef);
+            // void merge(iterator *a1, iterator *b1, iterator *a2, iterator *b2);
       public:
             void push_back(T x);
             void push_front(T x);
@@ -121,84 +121,84 @@ const T & dll<T>::back() const{
       return Tail->data;
 }
 
-template <class T>
-void dll<T>::merge_sort(iterator *a, iterator *b){;
-      if(a == nullptr || b == nullptr || a==b) return;
-      // cout<<a->data<<' '<<b->data<<endl;
-      node* end1  ;                 //end of first block
-      node *start2;                 //starting of second block
-      split(a, b, &end1, &start2);
-      merge_sort(a, end1);          //sorting first block
-      merge_sort(start2, b);        //sorting second block
-      merge(a, end1, start2, b);
-}
-
-template <class T>
-void dll<T>::sort(){
-      cout<<"Sorting"<<endl;
-      merge_sort(Head, Tail);
-}
-
-//If number of nodes is odd extra node goes in second part
-template <class T>
-void dll<T>::split(iterator *a, iterator *b, iterator **firstRef, iterator **secondRef){
-      while(a!=b){
-            a = a->next;
-            if(a!=b) b = b->prev;
-      }
-      if(a) *firstRef = a->prev;
-      *secondRef = a;
-}
-
-template <class T>
-void dll<T>::merge(iterator *a1, iterator *b1, iterator *a2, iterator *b2){
-      iterator *t1 = a1, *t2 = a2;
-      dll<T> L;
-      dll<T> R;
-      if(a1 == nullptr || a2 == nullptr){
-            return;
-      }
-
-      while(t1!=b1){
-            L.push_back(t1->data);
-            t1 = t1->next;
-      }
-      L.push_back(t1->data);
-      t1 = t1->next;
-
-      while(t2!=b2){
-            R.push_back(t2->data);
-            t2 = t2->next;
-      }
-      R.push_back(t2->data);
-      t2 = t2->next;
-
-      t1 = L.begin();
-      t2 = R.begin();
-      while(t1!=nullptr && t2!=nullptr){
-            if(t1->data > t2->data){
-                  a1->data = t1->data;
-                  t1 = t1->next;
-            }
-            else{
-                  a1->data = t2->data;
-                  t2 = t2->next;
-            }
-            a1 = a1->next;
-      }
-
-      while(t1!=nullptr){
-            a1->data = t1->data;
-            a1=a1->next;
-            t1 = t1->next;
-      }
-      while(t2!=nullptr){
-            a1->data = t2->data;
-            a1 = a1->next;
-            t2 = t2->next;
-      }
-}
-
+// template <class T>
+// void dll<T>::merge_sort(iterator *a, iterator *b){;
+//       if(a == nullptr || b == nullptr || a==b) return;
+//       // cout<<a->data<<' '<<b->data<<endl;
+//       node* end1  ;                 //end of first block
+//       node *start2;                 //starting of second block
+//       split(a, b, &end1, &start2);
+//       merge_sort(a, end1);          //sorting first block
+//       merge_sort(start2, b);        //sorting second block
+//       merge(a, end1, start2, b);
+// }
+//
+// template <class T>
+// void dll<T>::sort(){
+//       cout<<"Sorting"<<endl;
+//       merge_sort(Head, Tail);
+// }
+//
+// //If number of nodes is odd extra node goes in second part
+// template <class T>
+// void dll<T>::split(iterator *a, iterator *b, iterator **firstRef, iterator **secondRef){
+//       while(a!=b){
+//             a = a->next;
+//             if(a!=b) b = b->prev;
+//       }
+//       if(a) *firstRef = a->prev;
+//       *secondRef = a;
+// }
+//
+// template <class T>
+// void dll<T>::merge(iterator *a1, iterator *b1, iterator *a2, iterator *b2){
+//       iterator *t1 = a1, *t2 = a2;
+//       dll<T> L;
+//       dll<T> R;
+//       if(a1 == nullptr || a2 == nullptr){
+//             return;
+//       }
+//
+//       while(t1!=b1){
+//             L.push_back(t1->data);
+//             t1 = t1->next;
+//       }
+//       L.push_back(t1->data);
+//       t1 = t1->next;
+//
+//       while(t2!=b2){
+//             R.push_back(t2->data);
+//             t2 = t2->next;
+//       }
+//       R.push_back(t2->data);
+//       t2 = t2->next;
+//
+//       t1 = L.begin();
+//       t2 = R.begin();
+//       while(t1!=nullptr && t2!=nullptr){
+//             if(t1->data > t2->data){
+//                   a1->data = t1->data;
+//                   t1 = t1->next;
+//             }
+//             else{
+//                   a1->data = t2->data;
+//                   t2 = t2->next;
+//             }
+//             a1 = a1->next;
+//       }
+//
+//       while(t1!=nullptr){
+//             a1->data = t1->data;
+//             a1=a1->next;
+//             t1 = t1->next;
+//       }
+//       while(t2!=nullptr){
+//             a1->data = t2->data;
+//             a1 = a1->next;
+//             t2 = t2->next;
+//       }
+// }
+//
 class data_type{
 public:
       int x;
@@ -208,7 +208,7 @@ public:
 // template <class T>
 int main(){
 
-      dll<int> my_list;
+      dll<data_type> my_list;
       int choice, tmp;
       do{
             cout<<"======================MENU==================\n";
@@ -228,18 +228,18 @@ int main(){
                   case 1:
                         cout<<"Enter element: ";
                         cin>>tmp;
-                        my_list.push_front(tmp);
+                        my_list.push_front({2,3});
                         break;
                   case 2:
                         cout<<"Enter element: ";
                         cin>>tmp;
-                        my_list.push_back(tmp);
+                        // my_list.push_back(tmp);
                         break;
                   case 3:
-                        cout<<my_list.back()<<endl;
+                        // cout<<my_list.back()<<endl;
                         break;
                   case 4:
-                        cout<<my_list.front()<<endl;
+                        // cout<<my_list.front()<<endl;
                         break;
                   case 5:
                         my_list.pop_back();
@@ -248,16 +248,16 @@ int main(){
                         my_list.pop_front();
                         break;
                   case 7:
-                        cout<<my_list.back()<<endl;
+                        // cout<<my_list.back()<<endl;
                         my_list.pop_back();
                         break;
                   case 8:
-                        cout<<my_list.front()<<endl;
+                        // cout<<my_list.front()<<endl;
                         my_list.pop_front();
                   case 9:
-                        my_list.sort();
-                        cout<<my_list.front()<<' ';
-                        cout<<my_list.back()<<endl;
+                        // my_list.sort();
+                        // cout<<my_list.front()<<' ';
+                        // cout<<my_list.back()<<endl;
                         break;
                   // case 10:
                         // dll<int>::node *temp = my_list.begin();
