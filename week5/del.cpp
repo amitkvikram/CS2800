@@ -6,8 +6,21 @@ class c1{
 public:
       int x;
       int y;
+      c1(int a, int b){
+            x = a;
+            y = b;
+      }
+      const c1 & foo() {
+            return *this;
+            // return 10;
+      }
 };
 int main(int argc, char const *argv[]) {
-      dll<c1> l;
-      l.push_back({2,3});
+      c1 obj1{1,2};
+      obj1 = {2,3};
+      c1 *a = &(obj1.foo());
+      (*a).x = 10;
+      cout<<obj1.x<<endl;
+      // const int a = obj1.foo();
+      // a = 20;
 }
