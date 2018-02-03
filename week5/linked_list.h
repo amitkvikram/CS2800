@@ -36,7 +36,7 @@ class dll{
 
             //destructor
             ~dll(){
-                  // clear();
+                  clear();
                   delete Head;
                   delete Tail;
             }
@@ -119,4 +119,9 @@ class dll{
                   delete itr.current;
             }
             void sort();
+            void clear(){
+                  while(theSize!=0){
+                        pop_back();
+                  }
+            }
 };
