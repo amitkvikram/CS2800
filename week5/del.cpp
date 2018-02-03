@@ -1,11 +1,20 @@
 #include<bits/stdc++.h>
+#include "linked_list.h"
 using namespace std;
 
+class c1{
+      int y;
+public:
+      c1(int x){
+            y = x;
+      }
+};
+
 int main(int argc, char const *argv[]) {
-      list<pair<char, int> > my_list;
-      my_list.push_back({'a',2});
-      // cout<<my_list.front()<s<endl;
-      my_list.pop_back();
-      cout<<my_list.front().first<<endl;
-      return 0;
+      c1 obj1{2};
+      dll<int> my_list;
+      my_list.push_back(20);
+      my_list.push_back(21);
+
+      cout<<my_list.front()<<endl;
 }
