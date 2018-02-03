@@ -1,25 +1,24 @@
 /*
-	Name: Amit Vikram Singh
-	Roll No: 111601001
-	Date: 30/01/2018
-	Problem Name: Heap
+ Name: Amit Vikram Singh
+ Roll No.: 111601001
+ Problem: Priority Queue Implementation
 */
 #include<bits/stdc++.h>
 using namespace std;
 
-class Heap{                         //class for heap
+template<class T>
+class queue_priority{                         //class for heap
 private:
       int heap_capacity;            //variable to store capacity of heap
       int heap_size;                //size of heap
 public:
-      int *arr;                     //pointer to array in which elemnts of heap are stored
+      data_type *arr;                     //pointer to array in which elemnts of heap are stored
       void min_heapify(int i);      //function to min_heapify at vertex i
       int left_child(int i);        //function to return left child of ith node
       int right_child(int i);       //function to store right child of ith node
-      // int operator[](int index);
       void print_heap();            //function to print heap
-      void insert_element(int data);      //function to insert an element in heap
-      int delete_min();             //function to delete minimum element from heap
+      void insert_element(T data);      //function to insert an element in heap
+      T delete_min();             //function to delete minimum element from heap
       void heap_sort(bool ascending = false);             //function to sort the heap
       int capacity(){
             return heap_capacity;
@@ -35,28 +34,31 @@ public:
       }
 };
 
-void swap(int *a, int *b){          //function to swap two elements a and b
-      int temp = *a;
+void swap(data_type *a, data_type *b){          //function to swap two elements a and b
+      data_type temp = *a;
       *a = *b;
       *b = temp;
 }
 
-int Heap::left_child(int i){
+template<class T>
+int queue_priority<T>::left_child(int i){
       return 2*i+1;
 }
 
-int Heap::right_child(int i){
+template<class T>
+int queue_priority<T>::right_child(int i){
       return 2*i+2;
 }
 
-void Heap::min_heapify(int i){
+template<class T>
+void queue_priority<T>::min_heapify(int i){
       int smallest_index = i;
       int lchild = left_child(i);
       int rchild = right_child(i);
-      if(lchild < heap_size && arr[lchild] < arr[smallest_index]){
+      if(lchild < heap_size && arr[lchild].key < arr[smallest_index].key){
             smallest_index = lchild;
       }
-      if(rchild < heap_size && arr[rchild] < arr[smallest_index]){
+      if(rchild < heap_size && arr[rchild].key < arr[smallest_index].key){
             smallest_index = rchild;
       }
 
@@ -67,25 +69,27 @@ void Heap::min_heapify(int i){
 }
 
 //Inserting element in heap
-void Heap::insert_element(int data){
+template<class T>
+void queue_priority<T>::insert_element(T data){
       heap_size++;
       if(heap_size > heap_capacity){
-            cout<<"Heap exceeding its capacity, returning without inserting"<<endl;
+            cout<<"queue_priority exceeding its capacity, returning without inserting"<<endl;
             return;
       }
       arr[heap_size-1] = data;
       int ind = heap_size-1;
-      while(ind>0 && arr[ind]<arr[(ind-1)/2]){
+      while(ind>0 && arr[ind].key<arr[(ind-1)/2].key){
             swap(arr[ind], arr[(ind-1)/2]);
             ind = (ind-1)/2;
       }
 }
 
 //deleting and return minimum element from heap
-int Heap::delete_min(){
+template<class T>
+T queue_priority<T>::delete_min(){
       if(heap_size == 0){
             cout<<"LIST IS EMPTY"<<endl;
-            return INT_MAX;
+            return T{ };
       }
       swap(arr[heap_size - 1], arr[0]);
       heap_size--;
@@ -93,8 +97,48 @@ int Heap::delete_min(){
       return arr[heap_size];
 }
 
+//sorting the heap
+template<class T>
+void queue_priority<T>::heap_sort(bool ascending){
+      int tmp = heap_size;
+      for(int i =0; i<tmp; i++){
+            delete_min();
+      }
+
+      heap_size = tmp;
+      if(ascending == true){
+            for(int i =0; i<heap_size/2; i++){
+                  swap(&arr[i], &arr[heap_size-1-i]);
+            }
+      }
+}
+
+//building heap from array
+template<class T>
+queue_priority<T> build_heap(T arr1[], int n, int capacity){
+      queue_priority<T> heap;
+      heap.arr = arr1;
+      heap.set_heap_size(n);
+      heap.set_heap_capacity(capacity);
+      for(int i = (n-1)/2; i>=0; i--){
+            heap.min_heapify(i);
+      }
+      return heap;
+}
+
+//decrease key
+template<class T>
+void queue_priority<T>::decrease_key(int ind, int new_key){
+      arr[ind].key = new_key;
+      while(ind>0 && arr[ind].key<arr[(ind-1)/2].key){
+            swap(arr[ind], arr[ind-1]/2);
+            ind = (ind - 1)/2;
+      }
+}
+
 //printing heap
-void Heap::print_heap(){
+template<class T>
+void queue_priority<T>::print_heap(){
       int height = (int) (log(heap_size)/log(2) + 1);
       int tmp = heap_size;
 
@@ -110,8 +154,7 @@ void Heap::print_heap(){
                   cout<<"   ";
             }
             for(int i =0; i<num_node && ind<heap_size; i++){
-                  printf("%03d",arr[ind]);
-                  // cout<<arr[ind]<<" ";
+                  printf("%03d",arr[ind].key);
                   ind++;
                   for(int i =0; i<mid_gap; i++){
                         cout<<"   ";
@@ -122,64 +165,41 @@ void Heap::print_heap(){
       cout<<endl;
 }
 
-//sorting the heap
-void Heap::heap_sort(bool ascending){
-      int tmp = heap_size;
-      for(int i =0; i<tmp; i++){
-            delete_min();
-      }
-
-      heap_size = tmp;
-      if(ascending == true){
-            for(int i =0; i<heap_size/2; i++){
-                  swap(&arr[i], &arr[heap_size-1-i]);
-            }
-      }
-}
-
-//building heap from array
-Heap build_heap(int arr1[], int n, int capacity){
-      Heap heap;
-      heap.arr = arr1;
-      //cout<<"heap initialized"<<endl;
-      heap.set_heap_size(n);
-      heap.set_heap_capacity(capacity);
-      for(int i = (n-1)/2; i>=0; i--){
-            heap.min_heapify(i);
-      }
-      return heap;
-}
-
 //main begins here
 int main() {
       int n;
       cout<<"Enter Number of Elements: ";
       cin>>n;
-      int arr[100];
+      data_type *arr = new data_type[100];
+      int a, b;
       cout<<"Enter "<<n<<" Elements: ";
       for(int i =0; i<n; i++){
-            cin>>arr[i];
+            cin>>a>>b;
+            arr[i].edge_index = a;
+            arr[i].key = b;
       }
-      Heap heap = build_heap(arr, n, 100);
-      int choice, tmp;
+      queue_priority<data_type> heap = build_heap(arr, n, 100);
+      int choice;
+      data_type tmp;
       do{
             cout<<"------------------------------------------------------------------\n";
             cout<<"Enter 1 to insert an element in heap"<<endl;
             cout<<"Enter 2 to delete min element from heap"<<endl;
             cout<<"Enter 3 to sort the array(heap)"<<endl;
             cout<<"Enter 4 to print heap"<<endl;
-            cout<<"Enter 5 to exit"<<endl;
+            cout<<"Enter 5 for decreasing key\n";
+            cout<<"Enter 6 to exit"<<endl;
             cout<<"Enter Your Choice: ";
             cin>>choice;
             switch(choice) {
                   case 1:
                         cout<<"Enter Element to  be Inserted: ";
-                        cin>>tmp;
-                        heap.insert_element(tmp);
+                        cin>>a>>b;
+                        heap.insert_element({a, b});
                         break;
                   case 2:
                         tmp = heap.delete_min();
-                        if(tmp!=INT_MAX) cout<<"Minimum Element: "<<tmp<<endl;
+                        cout<<"Minimum Element: "<<tmp.index<<' '<<tmp.key<<endl;
                         break;
                   case 3:
                         heap.heap_sort(true);
@@ -189,6 +209,8 @@ int main() {
                         heap.print_heap();
                         break;
                   case 5:
+                        cout<<
+                  case 6:
                         cout<<"Exiting"<<endl;
                         break;
                   default:

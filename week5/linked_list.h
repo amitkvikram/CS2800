@@ -47,10 +47,12 @@ class dll{
             class const_iterator{
                   protected:
                         node *current;
+                        //Member Initializer List
                         const_iterator( node *p ) : current{ p }
                         { }
                   public:
                         friend class dll<T>;
+                        //Member Initializer List
                         const_iterator( ) : current{ nullptr }
                         { }
 
@@ -78,6 +80,7 @@ class dll{
                         }
 
                   protected:
+                        // Member Initializer List
                          iterator(node *p) : const_iterator{ p }
                         { }
 
