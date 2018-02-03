@@ -3,7 +3,7 @@
 using namespace std;
 
 int main(int argc, char const *argv[]) {
-      c1 obj1{2};
+      // c1 obj1{2};
       dll<int> my_list;
       my_list.push_back(20);
       my_list.push_back(21);
