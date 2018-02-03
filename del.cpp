@@ -28,24 +28,45 @@ using namespace std;
 //       cout<<t.x<<' '<<t.y<<endl;
 // }
 
+// class c1{
+// private:
+//       int x = 0;
+// public:
+//       int z = 0;
+//       class c2{
+//       private:
+//             int y;
+//       public:
+//             // friend class c1;
+//             void init1(){
+//                   c1 obj3;
+//                   obj3.x = 0;
+//             }
+//       };
+//       void init(){
+//             c2 obj1;
+//             // obj1.y = x;
+//             obj1.init1();
+//       }
+// };
+
 class c1{
 private:
       int x = 0;
 public:
       class c2{
-      private:
-            int y;
       public:
-            friend class c1;
+            int x1 = 0;
       };
-      void init(){
+
+      c1 func1(){
             c2 obj1;
-            obj1.y = 2;
+            return {obj1};
       }
 };
 
 int main(int argc, char const *argv[]) {
       c1 obj2;
-      obj2.init();
+      obj2.func1();
       return 0;
 }
