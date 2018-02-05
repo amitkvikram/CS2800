@@ -23,7 +23,7 @@ class graphNode{
 public:
       dll<T> adjList;   //adjacency list
       bool visited = false;
-      int parent;       //to store parent
+      int parent = -1;       //to store parent
       int dist_from_source;   //to store shortest distance from source vertex
       int explored  = false;  //to check if shortes path to the current vertex is calculated
 };
@@ -40,7 +40,7 @@ class Graph{
                   vertex = new T1[V];     //T1 = graphNode<edge>
                   int E, a, b, wt;
                   cin>>E;
-                  cout<<"Vertex: "<<V<<" Edge: "<<E<<endl;
+                  cout<<"#Vertex:"<<V<<" #Edge:"<<E<<endl;
                   //Creating Adjacent list
                   for(int i =0; i<E; i++){
                         cin>>a>>b>>wt;                    //and edge of weight=wt between vertex a and b;
@@ -64,7 +64,6 @@ void Graph<T1, T2>::print(){
             }
             cout<<endl;
       }
-      cout<<"-----------------------------------\n";
 }
 
 //item in priority_queue
@@ -103,9 +102,15 @@ void Graph<T1, T2>::dijkstra(int source){
       }
 
       //Printing shortest distance
-      cout<<"SOURCE: "<<source<<endl;
+      cout<<"\n----------SHORTEST PATH-----------\n"<<"SOURCE: "<<source<<endl;
       for(int i =0; i<V; i++){
-            if(vertex[i].explored == true) cout<<"Index: "<<i<<" distance: "<<vertex[i].dist_from_source<<" Parent: "<<vertex[i].parent<<endl;
+            if(vertex[i].explored == true) cout<<"Destination:"<<i<<"  Distance:"<<vertex[i].dist_from_source<<" Path: ";
+            int ind = i;
+            while(ind!=source && vertex[ind].parent!=-1){
+                  cout<<ind<<"<---";
+                  ind = vertex[ind].parent;
+            }
+            cout<<ind<<endl;
       }
 }
 
