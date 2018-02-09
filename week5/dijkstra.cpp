@@ -71,9 +71,6 @@ class item{
 public:
       int key = INT_MAX;           //distance from source vertex
       int index;                    //index of vertex
-      friend edge;
-      friend graphNode<edge>;
-      friend Graph<graphNode<edge>, edge>;
 };
 
 template<class T1, class T2>  //T1 = <graphNode<edge> T2 = edge
