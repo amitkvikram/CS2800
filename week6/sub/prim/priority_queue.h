@@ -18,8 +18,8 @@ public:
       int left_child(int i);        //function to return left child of ith node
       int right_child(int i);       //function to store right child of ith node
       void print_heap();            //function to print heap
-      void push(T data);      //function to insert an element in heap
-      T pop();             //function to delete minimum element from heap
+      void insert_element(T data);      //function to insert an element in heap
+      T delete_min();             //function to delete minimum element from heap
       void heap_sort(bool ascending = false);             //function to sort the heap
       void decrease_key(int ind, int new_key);
       int capacity(){
@@ -74,7 +74,7 @@ void queue_priority<T>::min_heapify(int i){
 
 //Inserting element in heap
 template<class T>
-void queue_priority<T>::push(T data){
+void queue_priority<T>::insert_element(T data){
       heap_size++;
       if(heap_size > heap_capacity){
             cout<<"queue_priority exceeding its capacity, returning without inserting"<<endl;
@@ -91,7 +91,7 @@ void queue_priority<T>::push(T data){
 
 //deleting and return minimum element from heap
 template<class T>
-T queue_priority<T>::pop(){
+T queue_priority<T>::delete_min(){
       if(heap_size == 0){
             cout<<"LIST IS EMPTY"<<endl;
             return T{ };
@@ -108,7 +108,7 @@ template<class T>
 void queue_priority<T>::heap_sort(bool ascending){
       int tmp = heap_size;
       for(int i =0; i<tmp; i++){
-            pop();
+            delete_min();
       }
 
       heap_size = tmp;

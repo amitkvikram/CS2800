@@ -2,7 +2,7 @@
   Name: Amit Vikram Singh
   Roll No: 111601001
   Date: 30Jan, 2018
-  Problem: Dijkstra Implementation
+  Problem: Prim's Algorithm Implementation
 */
 
 #include <iostream>
@@ -50,13 +50,13 @@ class Graph{
 
             }
             void print();                       //function to print graph infomrmation
-            void dijkstra(int source);
+            void prim();
 };
 
 //Print vertex and its adjacent list
 template<class T1, class T2>   //T1 = <graphNode<edge> T2 = edge
 void Graph<T1, T2>::print(){
-      cout<<"---------------Graph-------------\n";
+      cout<<"-----Graph---------\n";
       for(int i =0; i<V; i++){
             cout<<i<<": ";
             for(class dll<T2>::iterator itr= vertex[i].adjList.begin(); itr!= vertex[i].adjList.end(); itr++){
@@ -64,6 +64,7 @@ void Graph<T1, T2>::print(){
             }
             cout<<endl;
       }
+      cout<<"---------------------\n";
 }
 
 //item in priority_queue
@@ -74,49 +75,43 @@ public:
 };
 
 template<class T1, class T2>  //T1 = <graphNode<edge> T2 = edge
-void Graph<T1, T2>::dijkstra(int source){
+void Graph<T1, T2>::prim(){
       //Making priority_queue
       item *arr = new item[V];
+      int in_tree[V] = {0};
       for(int i =0; i<V; i++){
             arr[i].index = i;
       }
       queue_priority<item> heap = build_heap(arr, V, 100);
-      heap.decrease_key(source, 0);
-      vertex[source].parent = 0;
+      heap.decrease_key(0, 0);
+      vertex[0].parent = 0;
       while(heap.size()!=0){
             item temp = heap.pop();
             vertex[temp.index].dist_from_source = temp.key;
-            vertex[temp.index].explored = true;
+            in_tree[temp.index] = 1;      //source is added to tree
             int i = temp.index;
             for(class dll<T2>::iterator itr = vertex[i].adjList.begin(); itr!= vertex[i].adjList.end(); itr++){
                   int heap_pos = heap.pos[(*itr).ind];          //position of vertex in priority_queue
                   int ind = (*itr).ind;                     //index of vertex
-                  if(vertex[ind].explored == false && temp.key + (*itr).wt < heap.arr[heap_pos].key){
-                        heap.decrease_key(heap_pos, temp.key + (*itr).wt);                //decreasing key
+                  if(in_tree[ind] == 0 && (*itr).wt < heap.arr[heap_pos].key){
+                        heap.decrease_key(heap_pos, (*itr).wt);                //decreasing key
                         vertex[ind].parent = temp.index;                                  //storing parent
                   }
             }
       }
 
-      //Printing shortest distance
-      cout<<"\n----------SHORTEST PATH-----------\n"<<"SOURCE: "<<source<<endl;
-      for(int i =0; i<V; i++){
-            if(vertex[i].explored == true) cout<<"Destination:"<<i<<"  Distance:"<<vertex[i].dist_from_source<<" Path: ";
-            int ind = i;
-            while(ind!=source && vertex[ind].parent!=-1){
-                  cout<<ind<<"<---";
-                  ind = vertex[ind].parent;
-            }
-            cout<<ind<<endl;
+      cout<<"MST EDGES\n";
+      for(int i =1; i<V; i++){
+            cout<<vertex[i].parent<<"<--->"<<i<<endl;
       }
+
+
 }
 
 int main(int argc, char const *argv[]) {
       Graph<graphNode<edge>, edge> G;     //initializing graph object
       G.print();                          //printing graph information
 
-      int source; //index of source vertex
-      cin>>source;
-      G.dijkstra(source);     //callign dijkstra function to find and print the shortest distance of all vertices from source vertex
+      G.prim();     //callign dijkstra function to find and print the shortest distance of all vertices from source vertex
       return 0;
 }

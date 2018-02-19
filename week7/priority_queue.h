@@ -12,7 +12,6 @@ private:
       int heap_capacity;            //variable to store capacity of heap
       int heap_size;                //size of heap
 public:
-      int *pos;                    //position of vertex in heap
       T *arr;                     //pointer to array in which elemnts of heap are stored
       void min_heapify(int i);      //function to min_heapify at vertex i
       int left_child(int i);        //function to return left child of ith node
@@ -20,8 +19,8 @@ public:
       void print_heap();            //function to print heap
       void push(T data);      //function to insert an element in heap
       T pop();             //function to delete minimum element from heap
+      T top();
       void heap_sort(bool ascending = false);             //function to sort the heap
-      void decrease_key(int ind, int new_key);
       int capacity(){
             return heap_capacity;
       }
@@ -66,7 +65,6 @@ void queue_priority<T>::min_heapify(int i){
       }
 
       if(smallest_index != i){
-            swap(pos[arr[smallest_index].index], pos[arr[i].index]);
             swap(arr[smallest_index], arr[i]);
             min_heapify(smallest_index);
       }
@@ -83,7 +81,6 @@ void queue_priority<T>::push(T data){
       arr[heap_size-1] = data;
       int ind = heap_size-1;
       while(ind>0 && arr[ind].key<arr[(ind-1)/2].key){
-            swap(pos[arr[ind].index], pos[arr[(ind-1)/2].index]);
             swap(arr[ind], arr[(ind-1)/2]);
             ind = (ind-1)/2;
       }
@@ -96,11 +93,20 @@ T queue_priority<T>::pop(){
             cout<<"LIST IS EMPTY"<<endl;
             return T{ };
       }
-      swap(pos[arr[heap_size - 1].index], pos[arr[0].index]);
       swap(arr[heap_size - 1], arr[0]);
       heap_size--;
       min_heapify(0);
       return arr[heap_size];
+}
+
+//return minimum element without deleting it
+template<class T>
+T queue_priority<T>::top(){
+      if(heap_size == 0){
+            cout<<"List is empty"<<endl;
+            return T{ };
+      }
+      return arr[0];
 }
 
 //sorting the heap
@@ -124,25 +130,10 @@ template<class T>
 queue_priority<T> build_heap(T arr1[], int n, int capacity){
       queue_priority<T> heap;
       heap.arr = arr1;
-      heap.pos = new int[n];
-      for(int i =0; i<n; i++){
-            heap.pos[i] = i;
-      }
       heap.set_heap_size(n);
       heap.set_heap_capacity(capacity);
       for(int i = (n-1)/2; i>=0; i--){
             heap.min_heapify(i);
       }
       return heap;
-}
-
-//decrease key
-template<class T>
-void queue_priority<T>::decrease_key(int ind, int new_key){
-      arr[ind].key = new_key;
-      while(ind>0 && arr[ind].key<arr[(ind-1)/2].key){
-            swap(pos[arr[ind].index], pos[arr[(ind-1)/2].index]);
-            swap(arr[ind], arr[(ind-1)/2]);
-            ind = (ind - 1)/2;
-      }
 }
