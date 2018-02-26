@@ -21,7 +21,6 @@ public:
 class edge{
 public:
       int dest;    //destination vertex
-      int wt;     //edge weight
 };
 
 /*********************class structured for information about each node***********/
@@ -31,12 +30,11 @@ public:
   int parent = -1;
   dll<T> adjList;  ///Adjacent list to store the adjacent Vertices
   bool visited = false;
-  node();
 };
 
 /*********************class structured for information about graph************/
 template<class T1, class T2>   //T1 = <graphNode<edge> T2 = edge
-class graph{
+class Graph{
 public:
       int V;
       int E;
@@ -48,11 +46,14 @@ public:
             vertex = new T1[V];
       }
 
-      void add_edge(int a, int b, int wt);
+      void add_edge(int a, int b);
       void print();
       void dfs(my_stack<int> &st, int v_i, int *clock);
       void reset();
       backEdge detect_cycle();
+      backEdge dfs_cycle(int s, bool *in_stack);
+      void dfs_topological(int s, my_stack<int> &st);
+      void topologicalSort();
 };
 
 template<class T1, class T2>   //T1 = <graphNode<edge> T2 = edge
@@ -65,8 +66,8 @@ void Graph<T1, T2>::reset(){
 
 //ADD EDGE
 template<class T1, class T2>   //T1 = <graphNode<edge> T2 = edge
-void Graph<T1, T2>::add_edge(int a, int b, int wt){
-      vertex[a].adjList.push_back({b, wt});
+void Graph<T1, T2>::add_edge(int a, int b){
+      vertex[a].adjList.push_back({b});
 }
 
 //Print vertex and its adjacent list
@@ -76,7 +77,7 @@ void Graph<T1, T2>::print(){
       for(int i =0; i<V; i++){
             cout<<i<<": ";
             for(class dll<T2>::iterator itr= vertex[i].adjList.begin(); itr!= vertex[i].adjList.end(); itr++){
-                  cout<<(*itr).dest<<','<<(*itr).wt<<"  ";
+                  cout<<(*itr).dest<<"  ";
             }
             cout<<endl;
       }
@@ -84,13 +85,15 @@ void Graph<T1, T2>::print(){
 }
 
 //DFS for detecting Cycle
-backEdge dfs_cycle(int s){
+template<class T1, class T2>   //T1 = <graphNode<edge> T2 = edge
+backEdge Graph<T1, T2>::dfs_cycle(int s, bool *in_stack){
       vertex[s].visited = true;
       in_stack[s] =true;
       for(class dll<T2>::iterator itr= vertex[s].adjList.begin(); itr!= vertex[s].adjList.end(); itr++){
-            if(in_stack[*itr] == true) return {s, *itr};
-            if(visited[*itr] == false){
-                  backEdge tmp = dfs(*itr);
+            if(in_stack[(*itr).dest] == true) return {s, (*itr).dest};
+            if(vertex[(*itr).dest].visited == false){
+                  vertex[(*itr).dest].parent = s;
+                  backEdge tmp = dfs_cycle((*itr).dest, in_stack);
                   if(tmp.i!=-1) return  tmp;
             }
       }
@@ -110,4 +113,60 @@ backEdge Graph<T1, T2>::detect_cycle(){
             }
       }
       return {-1, -1};
+}
+
+//DFS for storing topological Order
+template<class T1, class T2>   //T1 = <graphNode<edge> T2 = edge
+void Graph<T1, T2>::dfs_topological(int s, my_stack<int> &st){
+      vertex[s].visited = true;
+      for(class dll<T2>::iterator itr= vertex[s].adjList.begin(); itr!= vertex[s].adjList.end(); itr++){
+            if(vertex[(*itr).dest].visited == false){
+                  dfs_topological((*itr).dest, st);
+            }
+      }
+      st.push(s);
+}
+
+//Print Topological Order
+template<class T1, class T2>   //T1 = <graphNode<edge> T2 = edge
+void Graph<T1, T2>::topologicalSort(){
+      backEdge tmp = detect_cycle();
+      if(tmp.i!=-1){
+            cout<<"CYCLE FOUND\n";
+            int x = tmp.i;
+            int y = tmp.j;
+            //return;
+            while(x!=y){
+                  cout<<x<<"<--";
+                  x = vertex[x].parent;
+            }
+            cout<<x<<endl;
+            return;
+      }
+
+      my_stack<int> st;
+      reset();
+      rep(i, 0, V){
+            if(vertex[i].visited == false){
+                  dfs_topological(i, st);
+            }
+      }
+      while(!st.is_empty()){
+            cout<<st.top()<<' ';
+            st.pop();
+      }
+      cout<<endl;
+}
+
+int main(){
+      int n, m;
+      cin>>n>>m;
+      Graph<graphNode<edge>, edge> G(n, m);
+      int a, b;
+      rep(i, 0, m){
+            cin>>a>>b;
+            G.add_edge(a, b);
+      }
+      G.print();
+      G.topologicalSort();
 }
