@@ -23,7 +23,7 @@ public:
   int parent;
   int previsit = 0;
   int postvisit = 0;
-  List *adjList;  ///Adjacent list to store the adjacent Vertices
+  dll<T> adjList;  ///Adjacent list to store the adjacent Vertices
   bool visited = false;
   node();
 };
@@ -35,7 +35,7 @@ public:
   node *vertex;
   graph(int V);
   void print_graph();
-  void dfs(stack1 **Top, int v_i, int *clock);
+  void dfs(my_stack<int> &st, int v_i, int *clock);
   backEdge checkBackEdge();
 };
 

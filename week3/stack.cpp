@@ -1,60 +1,180 @@
 /*
-  Problem Name:Ex1
-  Programmers'Name: Amit Vikram Singh
-  Roll No.:111601001
-  Data:29/08/2017
+  Name: Amit Vikram Singh
+  Roll No: 111601001
+  Code: Double Linked List
 */
 
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
+#include<iostream>
+using namespace std;
 
-struct stack1{
-	int data; //movieName stores the name of movie
-	struct stack1 *next; //ponter to next node in stack1
+template <class T>
+class my_stack{
+      private:
+            int theSize;
+            class node{
+                  public:
+                        T data;
+                        node *prev = nullptr;
+                        node *next = nullptr;
+                        node(const T &x = T{ }, node *p = nullptr, node *q = nullptr){
+                        prev = p;
+                        next = q;
+                        data = x;
+                        }
+            };
+            node *Head;
+            node *Tail;
+      public:
+            //Constructor
+            my_stack(){
+                  theSize = 0;
+                  Head = new node;
+                  Tail = new node;
+                  Head->next = Tail;
+                  Tail->prev = Head;
+            }
+
+            //destructor
+            ~my_stack(){
+                  clear();
+                  delete Head;
+                  delete Tail;
+            }
+      public:
+            class const_iterator{
+                  protected:
+                        node *current;
+                        const_iterator( node *p ) : current{ p }
+                        { }
+                  public:
+                        //friend class dll<T>;
+                        const_iterator( ) : current{ nullptr }
+                        { }
+
+            };
+            class iterator : public const_iterator{
+                  public:
+                        iterator(){ };
+
+                        iterator operator++(int){
+                              iterator old = *this;
+                              this->current = this->current->next;
+                              return old;
+                        }
+
+                        bool operator==(iterator itr){
+                              return this->current ==  itr.current;
+                        }
+
+                        bool operator!=(iterator temp){
+                              return !(temp == *this);
+                        }
+
+                        const T & operator*() const{
+                              return this->current->data;
+                        }
+
+                  protected:
+                         iterator(node *p) : const_iterator{ p }
+                        { }
+
+                        friend class my_stack<T>;
+            };
+      public:
+            void push(T x);
+            const T & top() const;
+            void pop();
+            int size();
+            bool is_empty();
+
+            iterator begin(){
+                  return {Head->next};
+            }
+            iterator end(){
+                  return {Tail};
+            }
+
+            const_iterator begin() const{
+                  return {Head->next};
+            }
+            const_iterator end() const{
+                  return {Tail};
+            }
+            //insert x befot itr(as done in STL)
+            void insert(iterator itr, T x){
+                  theSize++;
+                  node *temp = new node{x, itr.current->prev ,itr.current };
+                  itr.current->prev->next = temp;
+                  itr.current->prev = temp;
+            }
+
+            //erase element pointed by itr(following STL implementation)
+            void erase(iterator itr){
+                  theSize--;
+                  itr.current->next->prev = itr.current->prev;
+                  itr.current->prev->next = itr.current->next;
+                  delete itr.current;
+            }
+            void sort();
+            void clear(){
+                  while(theSize!=0){
+                        pop();
+                  }
+            }
 };
 
-int stackSize=0;    //stackSize stores size of stack1
 
-typedef struct stack1 stack1;  // setting alias "stack1" for "struct stack1"
-
-//stackTop prints the top of stack1
-void stackTop(stack1 **Topptr){
-        if(!(*Topptr)){                               //Checks if stack1 is empty
-		printf("--stack1 is empty--\n");
-		return;
-	}
-	printf("stackTop: %d\n", (*Topptr)->data);
-	return;
+template <class T>
+int my_stack<T>::size(){
+      return theSize;
 }
 
-//stackPush pushes new element at the top of stack1
-void stackPush(stack1 **Topptr ,int data){
-		stackSize++;
-		stack1 *temp= (stack1*)(malloc(sizeof(stack1)));
-		temp->data = data;
-		temp->next= *Topptr;
-		*Topptr= temp;
+template <class T>
+bool my_stack<T>::is_empty(){
+      return size() == 0;
 }
 
-//stackPop deletes and returns top of stack1
-int stackPop(stack1 **Topptr){
-	if(!(*Topptr)){                    //Checks if stack1 is empty
-		printf("stack1 is empty\n");
-		return -1;               //returns NULL if string is empty
-	}
-	stackSize--;
-	stack1 *temp= *Topptr;
-	int tempData = temp->data;
-	*Topptr=(*Topptr)->next;
-	free(temp);
-	return tempData;
+template <class T>
+void my_stack<T>::push(T x){
+      insert(begin(), x);
 }
 
-//isempty returns 1 if list is empty else returns 0
-int isEmpty(stack1 **Topptr){
-	if(!(*Topptr)){     //Checks if stack1 is empty
-		return 1;
-	}
-	return 0;
+template <class T>
+void my_stack<T>::pop(){
+      erase(begin());
+}
+
+template <class T>
+const T & my_stack<T>::top() const{
+      return (Head->next)->data;
+}
+
+void print_stack(my_stack<int> &st){
+      while(!st.is_empty()){
+            cout<<st.top()<<endl;
+            st.pop();
+      }
+}
+
+int main(int argc, char const *argv[]) {
+      my_stack<int> st;
+      int c=0;
+      while(c<=4){
+            cout<<"Enter your option\n1.Push\n2.pop()\n3top()\n4.print()\n";
+            cin>>c;
+            if(c==1){
+                  int tmp;
+                  cin>>tmp;
+                  st.push(tmp);
+            }
+            else if(c==2){
+                  st.pop();
+            }
+            else if(c==3){
+                  cout<<st.top()<<endl;
+            }
+            else if(c==4){
+                  print_stack(st);
+            }
+      }
 }
