@@ -151,6 +151,7 @@ void Graph<T1, T2>::topologicalSort(){
                   dfs_topological(i, st);
             }
       }
+      
       while(!st.is_empty()){
             cout<<st.top()<<' ';
             st.pop();
