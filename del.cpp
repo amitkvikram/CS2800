@@ -1,101 +1,50 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
 
-//
-//
-//
-// class C{
-// private:
-//       int x;
-//       int y;
-// public:
-//       void operator*(int m){
-//             x = x+m;
-//             y = y*m;
-//             cout<<x<<' '<<y<<endl;
-//       }
-//       C(int a, int b){
-//             x = a;
-//             y = b;
-//             cout<<x<<' '<<y<<endl;
-//       }
-//       friend void operator*(int m, C t);
-// };
-//
-// void operator*(int m,C t){
-//       t.x = t.x*m;
-//       t.y = t.y+m;
-//       cout<<t.x<<' '<<t.y<<endl;
-// }
-<<<<<<< HEAD
+typedef std::vector<int> vi;
+#define rep(i, a, b) for(int i = a; i<b; i++)
+#define pb push_back
 
-=======
-//
->>>>>>> e78f55c2ce8b24b7c44ca161897bbd507fd92e37
-// class c1{
-// private:
-//       int x = 0;
-// public:
-<<<<<<< HEAD
-//       int z = 0;
-=======
->>>>>>> e78f55c2ce8b24b7c44ca161897bbd507fd92e37
-//       class c2{
-//       private:
-//             int y;
-//       public:
-<<<<<<< HEAD
-//             // friend class c1;
-//             void init1(){
-//                   c1 obj3;
-//                   obj3.x = 0;
-//             }
-//       };
-//       void init(){
-//             c2 obj1;
-//             // obj1.y = x;
-//             obj1.init1();
-//       }
-// };
-
-class c1{
-private:
-      int x = 0;
-public:
-      class c2{
-      public:
-            int x1 = 0;
-      };
-
-      c1 func1(){
-            c2 obj1;
-            return {obj1};
+int main(){
+      int n, flag, Sum = 0;
+      cin>>n;
+      vi v(n);
+      vi tmp;
+      rep(i, 0, n){
+            cin>>v[i];
+            flag =  0;
+            for(auto j:tmp){
+                  if(j == v[i]) flag =1 ;
+            }
+            if(flag == 0) tmp.pb(v[i]);
       }
-};
 
-int main(int argc, char const *argv[]) {
-      c1 obj2;
-      obj2.func1();
-=======
-//             friend class c1;
-//       };
-//       void init(){
-//             c2 obj1;
-//             obj1.y = 2;
-//       }
-// };
+      sort(tmp.begin(), tmp.end());
+      if(tmp.back() - tmp.front()<2){
+            cout<<n<<endl;
+            for(auto i:v){
+                  cout<<i<<' ';
+            }
+      }
 
-int main(int argc, char const *argv[]) {
-      // c1 obj2;
-      // obj2.init();
-      std::list<int> v;
-      v.push_back(2);
-      v.push_back(3);
-      v.pop_back();
-      v.pop_back();
-      std::list<int>::iterator itr;
-      itr = v.begin();
-      cout<<*itr<<endl;
->>>>>>> e78f55c2ce8b24b7c44ca161897bbd507fd92e37
-      return 0;
+      else{
+            vi cnt(3, 0);
+            int a = tmp.front(), c = tmp.back(), b = (a+c)/2;
+            for(auto i:v){
+                  if(i == a) cnt[0]++;
+                  else if(i == b) cnt[1]++;
+                  else cnt[2]++;
+            }
+
+            int min_cnt = min(cnt[0], cnt[2]);
+            // int max_cnt = max(2*min_cnt, cnt[1]);
+            cout<<n-2*min_cnt<<endl;
+            int min_cnt1 = min_cnt;
+            rep(i, 0, n){
+                  if(v[i] == b) cout<<b<<' ';
+                  else if(v[i] == a && min_cnt-->0) cout<<b<<" ";
+                  else if(v[i] == c && min_cnt1-->0) cout<<b<<" ";
+                  else cout<<v[i]<<' ';
+            }
+      }
 }
