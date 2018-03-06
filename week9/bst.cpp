@@ -1,3 +1,9 @@
+/*
+  Name: Amit Vikram Singh
+  Roll No: 111601001
+  Date: 12 March, 2018
+  Problem: Binary Search Tree
+*/
 #include<iostream>
 using namespace std;
 
@@ -73,7 +79,7 @@ void postorder_traversal(node *r){
 }
 
 void find_preeding_key(node *r){
-      
+
 }
 
 int main(){
