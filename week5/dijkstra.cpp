@@ -69,7 +69,7 @@ void Graph<T1, T2>::print(){
 //item in priority_queue
 class item{
 public:
-      int key = INT_MAX;           //distance from source vertex
+      int key = inf;           //distance from source vertex
       int index;                    //index of vertex
 };
 
@@ -88,7 +88,7 @@ void Graph<T1, T2>::dijkstra(int source){
             vertex[temp.index].dist_from_source = temp.key;
             vertex[temp.index].explored = true;
             int i = temp.index;
-            for(class dll<T2>::iterator itr = vertex[i].adjList.begin(); itr!= vertex[i].adjList.end(); itr++){
+            for(class dll<T2>::iterator &itr = vertex[i].adjList.begin(); itr!= vertex[i].adjList.end(); itr++){
                   int heap_pos = heap.pos[(*itr).ind];          //position of vertex in priority_queue
                   int ind = (*itr).ind;                     //index of vertex
                   if(vertex[ind].explored == false && temp.key + (*itr).wt < heap.arr[heap_pos].key){
