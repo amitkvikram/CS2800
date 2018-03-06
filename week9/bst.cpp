@@ -67,7 +67,7 @@ bool insert_key(bst *T, int key){
 
 node* find_min(node *r){
       if(r == nullptr) return r;
-      else if(r->left== nullptr) return r->left;
+      else if(r->left== nullptr) return r;
       else return find_min(r->left);
 }
 
@@ -85,8 +85,7 @@ void postorder_traversal(node *r){
       cout<<r->key<<' ';
 }
 
-node* find_preeding_key(node *r, int key){
-      node *r = search(r, key);
+node* find_preeding_key(node *r){
       if(r == nullptr || r->left ==nullptr){
             cout<<"no predecessor\n";
             return nullptr;
@@ -98,8 +97,7 @@ node* find_preeding_key(node *r, int key){
       return curr;
 }
 
-void deleteKey(bst *T, int key){
-      node *curr = search(T->root, key);
+void deleteKey(bst *T, node* curr){
       // printf("%p\n",curr);
       if(curr == nullptr) return;
       if(curr->left == nullptr && curr->right == nullptr){
@@ -138,8 +136,8 @@ void deleteKey(bst *T, int key){
       }
 
       else{
-            int y = find_preeding_key(node *curr);
-            curr->key = y;
+            node* y = find_preeding_key(curr);
+            curr->key = y->key;
             delete(T, y);
       }
 }
@@ -147,24 +145,24 @@ void deleteKey(bst *T, int key){
 void print(node *r){
       if(r == nullptr) return;
       printf(" ");
-      print(node->right);
-      cout<<r.key<<endl;
-      print(node->left);
+      print(r->right);
+      cout<<r->key<<endl;
+      print(r->left);
 }
 
 int main(){
       bst T = bst();
       int choice;
-      d0{
-            cout<<"Enter Your Choice\n";
+      do{
             cout<<"1. Serach Key\n"<<"2. Insert Key\n"<<"3. Find Min Key\n"<<"4. InOrder traversal\n";
-            cout<<"5. Post Order Traversal\n"<<"6. Find Preeding Key\n"<<"Delete Key\n"<<"Print Key\n";
+            cout<<"5. Post Order Traversal\n"<<"6. Find Preeding Key\n"<<"7. Delete Key\n"<<"8. Print Key\n";
+            cout<<"Enter Your Choice: ";
             cin>>choice;
             if(choice == 1){
                   cout<<"Enter Key: ";
                   int key;
                   cin>>key;
-                  node *temp = search(key);
+                  node *temp = search(T.root, key);
                   if(temp == nullptr) cout<<"not found";
                   else cout<<"found";
             }
@@ -172,11 +170,11 @@ int main(){
                   cout<<"Enter Key: ";
                   int key;
                   cin>>key;
-                  bool flag = insert(&T, key);
+                  bool flag = insert_key(&T, key);
             }
             else if(choice == 3){
-                  int x = find_min(T.root);
-                  cout<<"Minimum Key: "<<x;
+                  node* x = find_min(T.root);
+                  if(x!=nullptr) cout<<"Minimum Key: "<<x->key;
             }
             else if(choice == 4){
                   cout<<"Inorder Traversal: ";
@@ -190,7 +188,8 @@ int main(){
                   cout<<"Enter Key: ";
                   int key;
                   cin>>key;
-                  node *r = find_preeding_key(T.root, key);
+                  node *r = search(r, key);
+                  r = find_preeding_key(r);
                   if(r == nullptr) cout<<"no predecessor";
                   else cout<<r->key;
             }
@@ -198,13 +197,12 @@ int main(){
                   cout<<"Enter Key: ";
                   int key;
                   cin>>key;
-                  deleteKey(&T, key);
-            }cout<<"Enter Key: ";
-                  int key;
-                  cin>>key;
+                  node *r = search(T.root, key);
+                  deleteKey(&T, r);
+            }
             else if(choice == 8){
-                  print(T);
+                  print(T.root);
             }
             cout<<endl;
-      }while(choice>0 && choice <8);
+      }while(choice>0 && choice <=8);
 }
