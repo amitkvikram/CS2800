@@ -34,6 +34,8 @@ public:
       }
 };
 
+void delete_node(b_tree &T, b_tree_node *r, int key);
+
 void print(b_tree_node *r, int sz){
        for(int i = r->n-1; i>=0; i--){
             if(r->leaf == false) print(r->child[i+1], sz+8);
@@ -88,10 +90,8 @@ void split_child(b_tree_node *r, int c_i){
 
 bool insert_non_full(b_tree &T, b_tree_node *r, int key){
       if(r->leaf == true){
-            cout<<"HERE, insert non full and leaf"<<" "<<"n= "<<r->n<<endl;
             int j = 0;
             while(j<=r->n-1 && r->key[j]<=key){
-                  cout<<j<<' ';
                   if(r->key[j] == key) return false;
                   j++;
             }
@@ -139,14 +139,14 @@ bool insert(b_tree &T, int key){
       }
 }
 
-int get_predecessor(node *r){
+int get_predecessor(b_tree_node *r){
       while(!r->leaf){
             r = r->child[r->n-1];
       }
-      return r->key[n-1];
+      return r->key[r->n-1];
 }
 
-int get_successor(node *r){
+int get_successor(b_tree_node *r){
       while(!r->leaf){
             r = r->child[0];
       }
@@ -154,7 +154,7 @@ int get_successor(node *r){
 }
 
 void delete_from_leaf(b_tree &T, b_tree_node *r, int ind){
-      while(ind<r->n-2){
+      while(ind<r->n-1){
             r->key[ind] = r->key[ind+1];
             ind++;
       }
@@ -162,36 +162,46 @@ void delete_from_leaf(b_tree &T, b_tree_node *r, int ind){
 }
 
 void delete_from_nonLeaf(b_tree &T, b_tree_node *r, int ind){
-      if(r->child[ind]->n >=t){
+      if(r->child[ind]->n >=r->t){
             int pred = get_predecessor(r->child[ind]);
             r->key[ind] = pred;
             delete_node(T, r->child[ind], pred);
        }
-      else if(r->child[ind+1]->n >= t){
+      else if(r->child[ind+1]->n >= r->t){
             int succ = get_successor(r->child[ind+1]);
             r->key[ind] = succ;
+            print(T.root, 0);
             delete_node(T, r->child[ind+1], succ);
       }
       else{
+            int key = r->key[ind];
             b_tree_node *l_child = r->child[ind];
             b_tree_node *r_child = r->child[ind+1];
             /*________Merge__________*/
             l_child->key[l_child->n] = r->key[ind];
             int i = 0;
             while(i<=r_child->n-1){
-                  l_child->key[i+l_child->n+1] = r_child->key[i];
-                  l_child->child[i+l_child->n+1] = r_child->child[i];
+                  l_child->key[i+r->t] = r_child->key[i];
+                  l_child->child[i+r->t] = r_child->child[i];
+                  i++;
             }
-            l_child[2*t-1] = r_child->child[r_child->n];
+            l_child->n = 2*r->t - 1;
+            l_child->child[2*r->t-1] = r_child->child[r_child->n];
             /*_________delete ind_____________*/
             i = ind;
-
             while(i<r->n-1){
                   r->key[i] = r->key[i+1];
                   r->child[i+1] = r->child[i+2];
+                  i++;
             }
             r->n--;
-            l_child->n = 2*t - 1;
+            if(r->n == 0){
+                  delete r;
+                  T.root = l_child;
+            }
+            l_child->n = 2*r->t - 1;
+            cout<<endl;
+            delete_node(T, l_child, key);
       }
 }
 
@@ -199,48 +209,104 @@ void delete_node(b_tree &T, b_tree_node *r, int key){
       if(r == nullptr) return;
 
       if(r->leaf == true){
+            // cout<<"leaf\n";
             int i = 0;
-            while(i<r->n-1 && r->key[i] <= key){
-                  if(key[i] == key){
-                        delete_from_leaf(T, T.root, i);
+            while(i<=r->n-1 && r->key[i] <= key){
+                  if(r->key[i] == key){
+                        // cout<<"Calling delete from leaf\n";
+                        delete_from_leaf(T, r, i);
                         return;
                   }
                   i++;
             }
       }
       else{
+            cout<<"Non leaf\n";
             int i =0;
-            while(i<r->n-1 && r->key[i]<=key){
-                  if(key[i] == key){
+            while(i<r->n && r->key[i]<=key){
+                  if(r->key[i] == key){
+                        // cout<<"Calling delete from non_leaf";
                         delete_from_nonLeaf(T, r, i);
                         return;
                   }
                   i++;
             }
             //HERE WE HAVE TO MAKE SURE THAT CHILD[I] HAS AT LEAST T KEYS..@PENDING
-            if(r->child[i]->n == t-1){
-                  if(i>0 && r->child[i-1] >= t){
+            if(r->child[i]->n == r->t-1){
+                  if(i>0 && r->child[i-1]->n >= r->t){
                         /*SHIFT all key and child of current node to right by one place*/
                         int j = r->child[i]->n-1;
                         r->child[i]->n++;
                         while(j>=0){
                               r->child[i]->key[i+1] = r->child[i]->key[i];
                               r->child[i]->child[i+2] = r->child[i]->child[i+1];
+                              j--;
                         }
                         r->child[i]->child[1] = r->child[i]->child[0];
                         /*move an extra key from r to curr child at the 0th index*/
-                        r->child[i]->child[0] = r->key[i-1];
+                        r->child[i]->key[0] = r->key[i];
                         /*move key from left sibling into r*/
-                        r->key[i-1] = r->child[i-1]->key[r->child[i-1]->n-1];
+                        r->key[i] = r->child[i-1]->key[r->child[i]->n-1];
                         /*move appropriate child pointer from sibling to child*/
-                        r->child[i]->child[0] = r->child[i-1]->child[r->child[i-1]->n];
+                        r->child[i]->child[0] = r->child[i-1]->child[r->child[i]->n];
                         r->child[i-1]->n--;
                   }
-                  else if(i<r->n-1 && r->child[i+1] >= t){
-                        
+                  else if(i<r->n && r->child[i+1]->n >= r->t){
+                        /*SHIFT all key and child of current node to right by one place*/
+                        r->child[i]->n++;
+                        /*move an extra key from r to curr child at the 0th index*/
+                        r->child[i]->key[r->child[i]->n-1] = r->key[i];
+                        /*move key from left sibling into r*/
+
+                        //BUG
+                        r->key[i] = r->child[i+1]->key[0];
+
+                        //Move child of right sibling to curr nodes
+                        r->child[i]->child[r->child[i]->n] = r->child[i+1]->child[0];
+                        //Right Sibling Shift
+                        int j = 0;
+                        while(j < r->child[i+1]->n-1){
+                              r->child[i+1]->key[j] = r->child[i+1]->key[j+1];
+                              r->child[i+1]->child[j] = r->child[i+1]->child[j+1];
+                              j++;
+                        }
+                        r->child[i+1]->child[j] = r->child[i+1]->child[j+1];
+                        /*move appropriate child pointer from sibling to child*/
+                        r->child[i+1]->n--;
+                        print(T.root, 0);
+
                   }
                   else{
-
+                        int ind = i;
+                        int key1 = r->key[ind];
+                        b_tree_node *l_child = r->child[ind];
+                        b_tree_node *r_child = r->child[ind+1];
+                        /*________Merge__________*/
+                        l_child->key[l_child->n] = r->key[ind];
+                        int i1 = 0;
+                        while(i1<=r_child->n-1){
+                              l_child->key[i1+r->t] = r_child->key[i1];
+                              l_child->child[i1+r->t] = r_child->child[i1];
+                              i1++;
+                        }
+                        l_child->n = 2*r->t - 1;
+                        l_child->child[2*r->t-1] = r_child->child[r_child->n];
+                        /*_________delete ind_____________*/
+                        i1 = ind;
+                        while(i1<r->n-1){
+                              r->key[i1] = r->key[i1+1];
+                              r->child[i1+1] = r->child[i1+2];
+                              i1++;
+                        }
+                        r->n--;
+                        if(r->n == 0){
+                              delete r;
+                              T.root = l_child;
+                        }
+                        l_child->n = 2*r->t - 1;
+                        cout<<endl;
+                        delete_node(T, l_child, key);
+                        return;
                   }
             }
             delete_node(T, r->child[i], key);
@@ -248,28 +314,41 @@ void delete_node(b_tree &T, b_tree_node *r, int key){
 }
 
 int main(){
-      int n;
-      cin>>n;
-      int k;
       b_tree T = b_tree(3);
 
-      for(int i = 0; i<n; i++){
-            cin>>k;
-            cout<<"Inserting "<<k<<endl;
-            if(insert(T, k)){
-                  cout<<"------------Tree--------------\n";
-                  print(T.root, 0);
-            }
-            else cout<<"Key already exists\n";
-            cout<<"-----------------------------\n";
-      }
+      int choice, k;
 
-      cin>>k;
-      while(k!=-1){
-            int tmp = search(T.root, k);
-            if(tmp!=-1) cout<<" <--root";
-            else cout<<"Not Found";
-            cout<<endl;
-            cin>>k;
-      }
+      do{
+            cout<<"1. Insert\n2. Delete\n3. Search\n4. Exit\n";
+            cout<<"Enter Choice: ";
+            cin>>choice;
+            if(choice == 1){
+                  cout<<"Enter Key: ";
+                  cin>>k;
+                  if(insert(T, k)){
+                        cout<<" ------------Tree--------------\n";
+                        print(T.root, 0);
+                  }
+                  else cout<<"Key already exists\n";
+                  cout<<" -----------------------------\n";
+            }
+            else if(choice == 2){
+                  cout<<"Enter Key: ";
+                  cin>>k;
+                  delete_node(T, T.root, k);
+                  cout<<" ------------Tree--------------\n";
+                  print(T.root, 0);
+                  cout<<" -----------------------------\n";
+            }
+            else if(choice == 3){
+                  cout<<"Enter Key: ";
+                  cin>>k;
+                  int tmp = search(T.root, k);
+                  if(tmp!=-1) cout<<" <--root";
+                  else cout<<"Not Found";
+                  cout<<endl;
+            }
+            cout<<"___________________________\n";
+
+      }while(choice>=1 && choice <4);
 }
