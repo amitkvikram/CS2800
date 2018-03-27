@@ -10,17 +10,18 @@ using namespace std;
 
 class b_tree_node{
 public:
-      b_tree_node **child;
-      int* key;
-      int n;
-      bool leaf;
-      int  t= 3;
+  b_tree_node **child;
+  int *key;
+  int n;
+  bool leaf;
+  int t = 3;
 
-      b_tree_node(bool lf){
-            key = new int[2*t - 1];
-            child = new b_tree_node* [2*t];
-            n = 0;
-            leaf = lf;
+  b_tree_node(bool lf)
+  {
+        key = new int[2 * t - 1];
+        child = new b_tree_node *[2 * t];
+        n = 0;
+        leaf = lf;
       }
 };
 
@@ -161,6 +162,35 @@ void delete_from_leaf(b_tree &T, b_tree_node *r, int ind){
       r->n--;
 }
 
+void merge(b_tree &T, b_tree_node * r, int ind){
+      b_tree_node *l_child = r->child[ind];
+      b_tree_node *r_child = r->child[ind+1];
+      /*________Merge__________*/
+      l_child->key[l_child->n] = r->key[ind];
+      int i = 0;
+      while(i<=r_child->n-1){
+            l_child->key[i+r->t] = r_child->key[i];
+            l_child->child[i+r->t] = r_child->child[i];
+            i++;
+      }
+      l_child->n = 2*r->t - 1;
+      l_child->child[2*r->t-1] = r_child->child[r_child->n];
+      /*_________delete ind_____________*/
+      i = ind;
+      while(i<r->n-1){
+            r->key[i] = r->key[i+1];
+            r->child[i+1] = r->child[i+2];
+            i++;
+      }
+      r->n--;
+      if(r->n == 0){
+            delete r;
+            T.root = l_child;
+      }
+      l_child->n = 2*r->t - 1;
+      cout<<endl;
+}
+
 void delete_from_nonLeaf(b_tree &T, b_tree_node *r, int ind){
       if(r->child[ind]->n >=r->t){
             int pred = get_predecessor(r->child[ind]);
@@ -175,33 +205,8 @@ void delete_from_nonLeaf(b_tree &T, b_tree_node *r, int ind){
       }
       else{
             int key = r->key[ind];
-            b_tree_node *l_child = r->child[ind];
-            b_tree_node *r_child = r->child[ind+1];
-            /*________Merge__________*/
-            l_child->key[l_child->n] = r->key[ind];
-            int i = 0;
-            while(i<=r_child->n-1){
-                  l_child->key[i+r->t] = r_child->key[i];
-                  l_child->child[i+r->t] = r_child->child[i];
-                  i++;
-            }
-            l_child->n = 2*r->t - 1;
-            l_child->child[2*r->t-1] = r_child->child[r_child->n];
-            /*_________delete ind_____________*/
-            i = ind;
-            while(i<r->n-1){
-                  r->key[i] = r->key[i+1];
-                  r->child[i+1] = r->child[i+2];
-                  i++;
-            }
-            r->n--;
-            if(r->n == 0){
-                  delete r;
-                  T.root = l_child;
-            }
-            l_child->n = 2*r->t - 1;
-            cout<<endl;
-            delete_node(T, l_child, key);
+            merge(T, r, ind);
+            delete_node(T, r->child[ind], key);
       }
 }
 
@@ -209,7 +214,6 @@ void delete_node(b_tree &T, b_tree_node *r, int key){
       if(r == nullptr) return;
 
       if(r->leaf == true){
-            // cout<<"leaf\n";
             int i = 0;
             while(i<=r->n-1 && r->key[i] <= key){
                   if(r->key[i] == key){
@@ -221,11 +225,9 @@ void delete_node(b_tree &T, b_tree_node *r, int key){
             }
       }
       else{
-            cout<<"Non leaf\n";
             int i =0;
             while(i<r->n && r->key[i]<=key){
                   if(r->key[i] == key){
-                        // cout<<"Calling delete from non_leaf";
                         delete_from_nonLeaf(T, r, i);
                         return;
                   }
@@ -233,37 +235,42 @@ void delete_node(b_tree &T, b_tree_node *r, int key){
             }
             //HERE WE HAVE TO MAKE SURE THAT CHILD[I] HAS AT LEAST T KEYS..@PENDING
             if(r->child[i]->n == r->t-1){
-                  if(i>0 && r->child[i-1]->n >= r->t){
+                  if(i>0 && r->child[i-1]->n >= r->t){    //if left sibling exists and has more than t-1 keys
+                        cout << "left sibling\n";
+
                         /*SHIFT all key and child of current node to right by one place*/
                         int j = r->child[i]->n-1;
                         r->child[i]->n++;
                         while(j>=0){
-                              r->child[i]->key[i+1] = r->child[i]->key[i];
-                              r->child[i]->child[i+2] = r->child[i]->child[i+1];
+                              r->child[i]->key[j+1] = r->child[i]->key[j];
+                              r->child[i]->child[j+2] = r->child[i]->child[j+1];
                               j--;
                         }
                         r->child[i]->child[1] = r->child[i]->child[0];
+
                         /*move an extra key from r to curr child at the 0th index*/
-                        r->child[i]->key[0] = r->key[i];
-                        /*move key from left sibling into r*/
-                        r->key[i] = r->child[i-1]->key[r->child[i]->n-1];
-                        /*move appropriate child pointer from sibling to child*/
-                        r->child[i]->child[0] = r->child[i-1]->child[r->child[i]->n];
+                        r->child[i]->key[0] = r->key[i-1];
+                        /*move last key from left sibling into r*/
+                        r->key[i - 1] = r->child[i - 1]->key[r->child[i]->n - 1];
+                        /*move appropriate child pointer(last one) from sibling to child*/
+                        r->child[i]->child[0] = r->child[i-1]->child[r->child[i-1]->n];
                         r->child[i-1]->n--;
+                        print(T.root, 0);
                   }
                   else if(i<r->n && r->child[i+1]->n >= r->t){
-                        /*SHIFT all key and child of current node to right by one place*/
+                        //Increment size of current child containing node
                         r->child[i]->n++;
-                        /*move an extra key from r to curr child at the 0th index*/
-                        r->child[i]->key[r->child[i]->n-1] = r->key[i];
+
+                        /*move an extra key from r to curr child at the last index*/
+                        r->child[i]->key[r->child[i]->n - 1] = r->key[i];
                         /*move key from left sibling into r*/
 
-                        //BUG
-                        r->key[i] = r->child[i+1]->key[0];
+                        //move 0th index key from right child to root
+                        r->key[i] = r->child[i + 1]->key[0];
 
                         //Move child of right sibling to curr nodes
                         r->child[i]->child[r->child[i]->n] = r->child[i+1]->child[0];
-                        //Right Sibling Shift
+                        //Right Sibling Shift to left
                         int j = 0;
                         while(j < r->child[i+1]->n-1){
                               r->child[i+1]->key[j] = r->child[i+1]->key[j+1];
@@ -277,35 +284,15 @@ void delete_node(b_tree &T, b_tree_node *r, int key){
 
                   }
                   else{
-                        int ind = i;
-                        int key1 = r->key[ind];
-                        b_tree_node *l_child = r->child[ind];
-                        b_tree_node *r_child = r->child[ind+1];
-                        /*________Merge__________*/
-                        l_child->key[l_child->n] = r->key[ind];
-                        int i1 = 0;
-                        while(i1<=r_child->n-1){
-                              l_child->key[i1+r->t] = r_child->key[i1];
-                              l_child->child[i1+r->t] = r_child->child[i1];
-                              i1++;
+                        //BUG
+                        cout << "merging";
+                        if(i==r->n){
+                              merge(T, r, i - 1);
+                              delete_node(T, r->child[i - 1], key);
+                              return;
                         }
-                        l_child->n = 2*r->t - 1;
-                        l_child->child[2*r->t-1] = r_child->child[r_child->n];
-                        /*_________delete ind_____________*/
-                        i1 = ind;
-                        while(i1<r->n-1){
-                              r->key[i1] = r->key[i1+1];
-                              r->child[i1+1] = r->child[i1+2];
-                              i1++;
-                        }
-                        r->n--;
-                        if(r->n == 0){
-                              delete r;
-                              T.root = l_child;
-                        }
-                        l_child->n = 2*r->t - 1;
-                        cout<<endl;
-                        delete_node(T, l_child, key);
+                        merge(T, r, i);
+                        delete_node(T, r->child[i], key);
                         return;
                   }
             }
