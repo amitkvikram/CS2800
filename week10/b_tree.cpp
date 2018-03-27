@@ -220,10 +220,24 @@ void delete_node(b_tree &T, b_tree_node *r, int key){
             //HERE WE HAVE TO MAKE SURE THAT CHILD[I] HAS AT LEAST T KEYS..@PENDING
             if(r->child[i]->n == t-1){
                   if(i>0 && r->child[i-1] >= t){
-                        
+                        /*SHIFT all key and child of current node to right by one place*/
+                        int j = r->child[i]->n-1;
+                        r->child[i]->n++;
+                        while(j>=0){
+                              r->child[i]->key[i+1] = r->child[i]->key[i];
+                              r->child[i]->child[i+2] = r->child[i]->child[i+1];
+                        }
+                        r->child[i]->child[1] = r->child[i]->child[0];
+                        /*move an extra key from r to curr child at the 0th index*/
+                        r->child[i]->child[0] = r->key[i-1];
+                        /*move key from left sibling into r*/
+                        r->key[i-1] = r->child[i-1]->key[r->child[i-1]->n-1];
+                        /*move appropriate child pointer from sibling to child*/
+                        r->child[i]->child[0] = r->child[i-1]->child[r->child[i-1]->n];
+                        r->child[i-1]->n--;
                   }
                   else if(i<r->n-1 && r->child[i+1] >= t){
-
+                        
                   }
                   else{
 
