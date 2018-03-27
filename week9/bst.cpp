@@ -122,6 +122,7 @@ void deleteKey(bst *T, node* curr){
             else if(curr->parent->left == curr) curr->parent->left = nullptr;
             else curr->parent->right = nullptr;
             delete curr;
+            T->sz--;
             return;
       }
 
@@ -136,6 +137,7 @@ void deleteKey(bst *T, node* curr){
                   if(curr->parent->left == curr) curr->parent->left = curr->right;
                   else curr->parent->right = curr->right;
             }
+            T->sz--;
             delete curr;
       }
 
@@ -150,6 +152,7 @@ void deleteKey(bst *T, node* curr){
                   if(curr->parent->left == curr) curr->parent->left = curr->left;
                   else curr->parent->right = curr->left;
             }
+            T->sz--;
             delete curr;
       }
 
