@@ -33,7 +33,7 @@ public:
       dll<T> adjList;   //adjacency list
       bool visited = false;
       int parent = -1;       //to store parent
-      int Rank;
+      int Rank ;
 };
 
 template<class T1, class T2>   //T1 = <graphNode<edge> T2 = edge

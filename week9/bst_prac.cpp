@@ -186,10 +186,10 @@ node *preorder_successor(node *r)
     {
         while (r->parent != nullptr)
         {
-            cout << "Here\n";
+            // cout << "Here\n";
             if (r->parent->left == r && r->parent->right != nullptr)
             {
-                cout << "breaking";
+                // cout << "breaking";
                 break;
             }
             r = r->parent;
@@ -202,8 +202,43 @@ node *preorder_successor(node *r)
 }
 
 //
-node *postorder_predecessor(node *r){
-    
+// node *postorder_predecessor(node *r){
+
+// }
+
+//Find minimum element in tree
+node* find_min(node *r){
+    if( r == nullptr ||r->left == nullptr)
+        return r;
+    return find_min(r->left);
+}
+
+//Find maximum element in    tree
+node* find_max(node *r){
+    if(r== nullptr || r->right == nullptr)
+        return r;
+    return find_max(r->right);
+}
+
+//Second Largest
+node *second_largest(node *r){
+    node *tmp = find_max(r);
+    if(tmp->parent!=nullptr)
+        return tmp->parent;
+    find_max(r->left);
+}
+
+//kth largest recursive
+node *k_largest(node *r, int &c, int k){
+    if(r == nullptr  || c>=k)
+        return;
+
+    k_largest(r->right, c, k);
+    c++;
+    if(c >= k){
+        return r;
+    }
+    k_largest(r->left, c, k);
 }
 
 int main()
